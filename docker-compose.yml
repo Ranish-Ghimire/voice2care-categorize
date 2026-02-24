@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  app:
+    image: python:3.10
+    container_name: categorize
+    working_dir: /app
+    volumes:
+      - .:/app
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    tty: true
+
+volumes:
+  ollama_data:
